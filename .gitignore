@@ -1,0 +1,16 @@
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# Generated experiment outputs
+results/reproduced/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
