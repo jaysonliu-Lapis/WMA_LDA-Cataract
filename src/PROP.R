@@ -1,4 +1,4 @@
-# PROP core implementation for the ODIR-5K cataract experiment.
+# PROP core implementation for the cataract_patient_dataset experiment.
 #
 # Algorithm: BH/t-test (or L1 logistic) screening -> three tiers of random
 # subspaces -> DSDA base learners -> simplex-constrained QP weights -> weighted
@@ -158,4 +158,26 @@ predict_prop <- function(object, X) {
   }, object$models, object$subindex)
   weighted_score <- Reduce(`+`, Map(`*`, scores, object$weights))
   ifelse(weighted_score > 0, 2L, 1L)
+}
+
+# ---------------------------------------------------------------------------
+# High-level convenience API (train / classify)
+#
+# prop_train()   fits PROP on a user-supplied training set and returns the
+#                fitted object, including the learned ensemble `weights`.
+# prop_predict() applies a fitted PROP object to new feature rows and returns
+#                class labels 1 or 2.
+#
+# The packaged data uses labels 0/1; PROP itself uses 1/2, so convert with
+# `y_train + 1L` (or `ifelse(y_train == 0, 1L, 2L)`) before calling prop_train().
+# ---------------------------------------------------------------------------
+
+prop_train <- function(X, y, screening = c("ttest", "l1lr"), seed = 2026L) {
+  screening <- match.arg(screening)
+  if (!is.null(seed)) set.seed(seed)
+  fit_prop(X = X, y = y, screening = screening)
+}
+
+prop_predict <- function(object, X) {
+  predict_prop(object, X)
 }

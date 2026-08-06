@@ -2,13 +2,13 @@
 
 ## Contents
 
-The package contains exactly the 212 ODIR-5K training patients used in the ResNet-50 cataract PROP experiment, one raw right-eye JPEG per patient, complete source-table fields for the selected patients, and the cached features used by the classifier.
+The package contains exactly the 212 cataract_patient_dataset training patients used in the ResNet-50 cataract PROP experiment, one raw right-eye JPEG per patient, complete source-table fields for the selected patients, and the cached features used by the classifier.
 
 `cataract_metadata.csv` preserves every column used from `data.xlsx`:
 
 | Field | Meaning |
 | --- | --- |
-| `ID` | ODIR patient identifier |
+| `ID` | cataract_patient_dataset patient identifier |
 | `Patient Age`, `Patient Sex` | source demographic fields |
 | `Left-Fundus`, `Right-Fundus` | source image names |
 | `Left-Diagnostic Keywords`, `Right-Diagnostic Keywords` | source diagnostic text |
@@ -24,7 +24,7 @@ The features were produced from the original right-eye JPEGs with the ImageNet-p
 
 ## Label scope and limitation
 
-ODIR labels in this package are patient-level labels. They may reflect a diagnosis made using both eyes, while this study fixes the model input to the right eye. Consequently, this is a patient-level cataract-comorbidity task, not a verified same-eye multi-label image task.
+cataract_patient_dataset labels in this package are patient-level labels. They may reflect a diagnosis made using both eyes, while this study fixes the model input to the right eye. Consequently, this is a patient-level cataract-comorbidity task, not a verified same-eye multi-label image task.
 
 ## Integrity and reproducibility
 
@@ -32,4 +32,4 @@ ODIR labels in this package are patient-level labels. They may reflect a diagnos
 
 ## Permission for this release
 
-The collaborating hospital project supplying this study's data package has authorized public release of the selected images, metadata, and derived features with this repository. This permission statement is recorded in [DATA_PERMISSION.md](../DATA_PERMISSION.md). Please cite both the associated paper and the ODIR-5K provenance when reusing the package.
+The collaborating hospital project supplying this study's data package has authorized public release of the selected images, metadata, and derived features with this repository. This permission statement is recorded in [DATA_PERMISSION.md](../DATA_PERMISSION.md). Please cite both the associated paper and the cataract_patient_dataset provenance when reusing the package.

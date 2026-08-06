@@ -3,8 +3,6 @@
 .RData
 .Rproj.user/
 
-# Generated experiment outputs
-results/reproduced/
 
 # Python
 __pycache__/

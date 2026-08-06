@@ -1,5 +1,5 @@
 {
-  "dataset": "ODIR-5K cataract patient-level cohort",
+  "dataset": "cataract_patient_dataset",
   "n_samples": 212,
   "class_counts": {
     "0": 146,

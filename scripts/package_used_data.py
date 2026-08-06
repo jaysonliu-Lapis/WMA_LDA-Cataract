@@ -14,6 +14,7 @@ python scripts/package_used_data.py --source-root D:/eye-project
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import shutil
@@ -99,6 +100,14 @@ def main() -> None:
         raise ValueError("Right-eye image names do not match the feature matrix")
     selected["Y_cataract"] = selected["Y_cataract"].astype("int8")
     selected["right_eye_image"] = features["filename"].astype(str).to_numpy()
+    # Sequential renumbering (1..N in feature-row order) to match the
+    # packaged repository layout.
+    new_ids = np.arange(1, len(selected) + 1)
+    source_filenames = selected["right_eye_image"].astype(str).to_numpy()
+    selected["ID"] = new_ids
+    selected["right_eye_image"] = np.array([f"{i}_right.jpg" for i in new_ids])
+    selected["Left-Fundus"] = np.array([f"{i}_left.jpg" for i in new_ids])
+    selected["Right-Fundus"] = np.array([f"{i}_right.jpg" for i in new_ids])
 
     labels = pd.DataFrame({
         "ID": selected["ID"].astype(int),
@@ -117,7 +126,21 @@ def main() -> None:
     npy_path = processed_dir / "features_resnet50.npy"
     selected.to_csv(metadata_path, index=False, encoding="utf-8", float_format="%.6f")
     labels.to_csv(labels_path, index=False, encoding="utf-8")
-    shutil.copy2(feature_csv, features_path)
+    # Rewrite the feature CSV with renumbered ID/filename columns, preserving
+    # the 2048 feature values verbatim (no float round-trip).
+    with open(feature_csv, newline="", encoding="utf-8") as f_in:
+        reader = csv.reader(f_in)
+        header = next(reader)
+        feature_rows = list(reader)
+    if len(feature_rows) != len(labels):
+        raise ValueError(
+            f"Feature CSV has {len(feature_rows)} data rows but labels has {len(labels)}"
+        )
+    with open(features_path, "w", newline="", encoding="utf-8") as f_out:
+        writer = csv.writer(f_out, lineterminator="\n")
+        writer.writerow(header)
+        for i, row in enumerate(feature_rows, start=1):
+            writer.writerow([str(i), f"{i}_right.jpg"] + row[2:])
     shutil.copy2(feature_npy, npy_path)
 
     matrix = np.load(npy_path)
@@ -125,16 +148,16 @@ def main() -> None:
         raise ValueError(f"Unexpected NPY feature matrix: shape={matrix.shape}, dtype={matrix.dtype}")
 
     copied = []
-    for filename in labels["filename"]:
-        src = image_source / filename
-        dst = image_dir / filename
+    for new_name, source_name in zip(labels["filename"], source_filenames):
+        src = image_source / source_name
+        dst = image_dir / new_name
         if not src.exists():
             raise FileNotFoundError(src)
         shutil.copy2(src, dst)
         copied.append(dst)
 
     manifest = {
-        "dataset": "ODIR-5K cataract patient-level cohort",
+        "dataset": "cataract_patient_dataset",
         "n_samples": int(len(labels)),
         "class_counts": {str(key): int(value) for key, value in labels["Y_cataract"].value_counts().sort_index().items()},
         "image_side": "right",
