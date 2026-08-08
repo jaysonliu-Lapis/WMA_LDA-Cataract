@@ -50,7 +50,7 @@ The reported evaluation is 100 repeated stratified 2:1 train/test splits, using 
 
 ```text
 data/
-  images/right/                 # 212 right-eye images actually used
+  images/right/                 # 212 right-eye images actually used (Patient_1.jpg ... Patient_212.jpg)
   processed/
     cataract_metadata.csv       # all original cataract_patient_dataset fields for the 212 selected patients
     cataract_labels.csv         # model labels and covariates
@@ -76,7 +76,7 @@ this script only to regenerate the features from the images:
 python scripts/extract_features.py
 ```
 
-- Input: `data/images/right/` (`1_right.jpg` ... `212_right.jpg`)
+- Input: `data/images/right/` (`Patient_1.jpg` ... `Patient_212.jpg`)
 - Output: overwrites `data/processed/features_resnet50.csv` and
   `data/processed/features_resnet50.npy`, then verifies the row order against
   `data/processed/cataract_labels.csv`
@@ -86,7 +86,7 @@ python scripts/extract_features.py
 ### Classify your own eye images
 
 1. Put your own **right-eye** images in a folder (e.g. `my_images/`), named
-   `<any-number>_right.jpg` (for example `1_right.jpg`, `2_right.jpg`).
+   `Patient_<number>.jpg` (for example `Patient_1.jpg`, `Patient_2.jpg`).
 2. Extract their 2048-d features:
 
    ```powershell

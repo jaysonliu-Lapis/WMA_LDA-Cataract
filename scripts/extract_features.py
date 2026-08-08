@@ -66,8 +66,8 @@ def build_model(device: torch.device):
 # ---------------------------------------------------------------------------
 # Dataset
 # ---------------------------------------------------------------------------
-# Matches the repository's current naming: 1_right.jpg ... 212_right.jpg
-RIGHT_RE = re.compile(r"^(\d+)_right\.jpg$")
+# Matches the repository's current naming: Patient_1.jpg ... Patient_212.jpg
+RIGHT_RE = re.compile(r"^Patient_(\d+)\.jpg$")
 
 
 def collect_right_eye(folder: str):
@@ -144,7 +144,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--images-dir", default=IMAGES_DIR,
-        help="Folder containing <number>_right.jpg images (default: data/images/right)",
+        help="Folder containing Patient_<number>.jpg images (default: data/images/right)",
     )
     parser.add_argument(
         "--output-csv", default=DEFAULT_OUTPUT_CSV,
@@ -177,7 +177,7 @@ def main():
     items = collect_right_eye(args.images_dir)
     if not items:
         raise SystemExit(
-            f"[error] no <number>_right.jpg images found in {args.images_dir}"
+            f"[error] no Patient_<number>.jpg images found in {args.images_dir}"
         )
     print(f"[info] right-eye images: {len(items)}")
 

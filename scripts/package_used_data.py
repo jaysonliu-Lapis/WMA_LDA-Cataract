@@ -105,9 +105,9 @@ def main() -> None:
     new_ids = np.arange(1, len(selected) + 1)
     source_filenames = selected["right_eye_image"].astype(str).to_numpy()
     selected["ID"] = new_ids
-    selected["right_eye_image"] = np.array([f"{i}_right.jpg" for i in new_ids])
-    selected["Left-Fundus"] = np.array([f"{i}_left.jpg" for i in new_ids])
-    selected["Right-Fundus"] = np.array([f"{i}_right.jpg" for i in new_ids])
+    selected["right_eye_image"] = np.array([f"Patient_{i}.jpg" for i in new_ids])
+    selected["Left-Fundus"] = np.array([f"Patient_{i}_left.jpg" for i in new_ids])
+    selected["Right-Fundus"] = np.array([f"Patient_{i}.jpg" for i in new_ids])
 
     labels = pd.DataFrame({
         "ID": selected["ID"].astype(int),
@@ -140,7 +140,7 @@ def main() -> None:
         writer = csv.writer(f_out, lineterminator="\n")
         writer.writerow(header)
         for i, row in enumerate(feature_rows, start=1):
-            writer.writerow([str(i), f"{i}_right.jpg"] + row[2:])
+            writer.writerow([str(i), f"Patient_{i}.jpg"] + row[2:])
     shutil.copy2(feature_npy, npy_path)
 
     matrix = np.load(npy_path)
