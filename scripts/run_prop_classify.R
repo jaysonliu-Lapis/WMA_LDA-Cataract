@@ -5,11 +5,12 @@
 #
 # Usage:
 #   Rscript scripts/run_prop_classify.R --input=new_features.csv
+#   Rscript scripts/run_prop_classify.R --input=new_features.csv --labels=my_labels.csv
 #   Rscript scripts/run_prop_classify.R --input=new_features.csv --train-ratio=0.7
 #   Rscript scripts/run_prop_classify.R --input=new_features.csv --screening=l1lr --transform=zscore --seed=2026
 #   Rscript scripts/run_prop_classify.R            # classify the packaged training features themselves
 #
-# Input CSV format (same schema as data/processed/features_resnet50.csv):
+# Input CSV format (same schema as data/features_resnet50.csv):
 #   ID, filename, f0001, f0002, ..., f2048
 # ID/filename columns are optional; the 2048 f-columns are required.
 #
@@ -50,11 +51,18 @@ split_prop_data <- function(y, train_ratio) {
 # Returns a list with X_train, y_train, X_test, y_test, X_new, id_col, fn_col,
 # test_id_col, test_fn_col, feature_columns.
 prepare_prop_data <- function(input = NULL, train_ratio = NULL,
-                              seed = 2026L, repo_root = find_repo_root()) {
+                              seed = 2026L,
+                              labels = NULL,
+                              repo_root = find_repo_root()) {
   repo_root <- normalizePath(repo_root, winslash = "/")
-  features_csv <- file.path(repo_root, "data", "processed", "features_resnet50.csv")
-  labels_csv <- file.path(repo_root, "data", "processed", "cataract_labels.csv")
+  features_csv <- file.path(repo_root, "data", "features_resnet50.csv")
+  if (is.null(labels)) labels <- file.path(repo_root, "data", "cataract_labels.csv")
+  labels_csv <- labels
   feat_dt <- data.table::fread(features_csv)
+  if (!file.exists(labels_csv)) {
+    stop("Training labels file not found: ", labels_csv,
+         "\nProvide it via --labels (or restore data/cataract_labels.csv).")
+  }
   lab_dt <- data.table::fread(labels_csv)
   stopifnot(identical(feat_dt$ID, lab_dt$ID), identical(feat_dt$filename, lab_dt$filename))
 
@@ -114,12 +122,13 @@ prepare_prop_data <- function(input = NULL, train_ratio = NULL,
 run_classify <- function() {
   arguments <- commandArgs(trailingOnly = TRUE)
   options <- list(input = NULL, train_ratio = NULL, screening = "ttest",
-                  transform = "none", seed = 2026L)
+                  transform = "none", seed = 2026L, labels = NULL)
   for (argument in arguments) {
     if (!grepl("^--[^=]+=", argument)) stop("Invalid option: ", argument)
     key <- sub("^--([^=]+)=.*$", "\\1", argument)
     value <- sub("^--[^=]+=", "", argument)
     if (identical(key, "input")) options$input <- value
+    else if (identical(key, "labels")) options$labels <- value
     else if (identical(key, "train-ratio")) options$train_ratio <- as.numeric(value)
     else if (identical(key, "screening")) options$screening <- value
     else if (identical(key, "transform")) options$transform <- value
@@ -134,7 +143,7 @@ run_classify <- function() {
   if (!requireNamespace("TULIP", quietly = TRUE)) stop("Install TULIP first")
 
   data <- prepare_prop_data(input = options$input, train_ratio = options$train_ratio,
-                            seed = options$seed)
+                            seed = options$seed, labels = options$labels)
   cat("Training PROP on", nrow(data$X_train), "samples (screening =", options$screening,
       ", transform =", options$transform, ")\n")
   if (!is.null(data$X_test)) {

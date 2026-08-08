@@ -7,8 +7,8 @@ weights, V2) with the final fully connected layer removed (global average
 pooling kept), and dump the resulting 2048-dim feature vectors to CSV / NPY.
 
 Default: regenerate the packaged features from `data/images/right/` into
-`data/processed/features_resnet50.csv` and `features_resnet50.npy`, then verify
-the row order against `data/processed/cataract_labels.csv`.
+`data/features_resnet50.csv` and `data/features_resnet50.npy`, then verify
+the row order against `data/cataract_labels.csv` when it is present.
 
 For your own eye images, point --images-dir at your folder and choose output
 paths; the model is then trained later by the R pipeline on the packaged data.
@@ -41,7 +41,7 @@ from tqdm import tqdm
 # ---------------------------------------------------------------------------
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 IMAGES_DIR = os.path.join(PROJECT_ROOT, "data", "images", "right")
-OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data", "processed")
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data")
 LABELS_CSV = os.path.join(OUTPUT_DIR, "cataract_labels.csv")
 DEFAULT_OUTPUT_CSV = os.path.join(OUTPUT_DIR, "features_resnet50.csv")
 DEFAULT_OUTPUT_NPY = os.path.join(OUTPUT_DIR, "features_resnet50.npy")
@@ -148,11 +148,11 @@ def parse_args():
     )
     parser.add_argument(
         "--output-csv", default=DEFAULT_OUTPUT_CSV,
-        help="Output feature CSV (default: data/processed/features_resnet50.csv)",
+        help="Output feature CSV (default: data/features_resnet50.csv)",
     )
     parser.add_argument(
         "--output-npy", default=DEFAULT_OUTPUT_NPY,
-        help="Output feature NPY (default: data/processed/features_resnet50.npy)",
+        help="Output feature NPY (default: data/features_resnet50.npy)",
     )
     parser.add_argument(
         "--no-check-labels", action="store_true",

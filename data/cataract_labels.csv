@@ -1,4 +1,4 @@
-ID,filename,Age,Sex,N,D,G,C,A,H,M,O,Y_cataract
+﻿ID,filename,Age,Sex,N,D,G,C,A,H,M,O,Y_cataract
 1,Patient_1.jpg,69,Female,0,0,0,1,0,0,0,0,0
 2,Patient_2.jpg,75,Female,0,0,0,1,0,0,0,0,0
 3,Patient_3.jpg,66,Male,0,1,0,1,0,0,0,0,1
