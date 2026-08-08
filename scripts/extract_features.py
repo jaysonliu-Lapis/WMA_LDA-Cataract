@@ -6,7 +6,7 @@ For every right-eye image in a folder, run a pretrained ResNet-50 (ImageNet
 weights, V2) with the final fully connected layer removed (global average
 pooling kept), and dump the resulting 2048-dim feature vectors to CSV / NPY.
 
-Default: regenerate the packaged features from `data/images/right/` into
+Default: regenerate the packaged features from `data/images/` into
 `data/features_resnet50.csv` and `data/features_resnet50.npy`, then verify
 the row order against `data/cataract_labels.csv` when it is present.
 
@@ -40,7 +40,7 @@ from tqdm import tqdm
 # Paths (repository layout: images and data both live under data/)
 # ---------------------------------------------------------------------------
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-IMAGES_DIR = os.path.join(PROJECT_ROOT, "data", "images", "right")
+IMAGES_DIR = os.path.join(PROJECT_ROOT, "data", "images")
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data")
 LABELS_CSV = os.path.join(OUTPUT_DIR, "cataract_labels.csv")
 DEFAULT_OUTPUT_CSV = os.path.join(OUTPUT_DIR, "features_resnet50.csv")
@@ -144,7 +144,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--images-dir", default=IMAGES_DIR,
-        help="Folder containing Patient_<number>.jpg images (default: data/images/right)",
+        help="Folder containing Patient_<number>.jpg images (default: data/images)",
     )
     parser.add_argument(
         "--output-csv", default=DEFAULT_OUTPUT_CSV,

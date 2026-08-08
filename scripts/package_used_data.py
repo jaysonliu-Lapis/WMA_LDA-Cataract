@@ -63,7 +63,7 @@ def main() -> None:
     source_root = args.source_root.resolve()
     output_root = args.output_root.resolve()
     processed_dir = output_root / "data" / "processed"
-    image_dir = output_root / "data" / "images" / "right"
+    image_dir = output_root / "data" / "images"
     processed_dir.mkdir(parents=True, exist_ok=True)
     image_dir.mkdir(parents=True, exist_ok=True)
 
